@@ -1,0 +1,60 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.12.0'
+    id 'idea'
+    id 'groovy'
+}
+
+group 'com.fuseanalytics'
+version '1.0-SNAPSHOT'
+
+wrapper {
+    gradleVersion = '6.2.2'
+}
+
+jar {
+    manifest {
+        attributes([
+                'Manifest-Version': '1.0',
+                'Build-Tag'       : "$buildTag"
+        ])
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+//    implementation 'org.codehaus.groovy:groovy-all:2.5.23'
+    implementation 'net.lingala.zip4j:zip4j:2.11.5'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+gradlePlugin {
+    plugins {
+        s3Plugin {
+            id = 'com.fuseanalytics.gradle.zip4j'
+            displayName = 'Gradle S3 Plugin'
+            description = """
+                Adds support for building zip files using zip4j library which
+                supports password protected zip files, encryption settings,
+                split zip files.
+            """
+            implementationClass = 'com.fuseanalytics.gradle.zip4j.Zip4jPlugin'
+        }
+    }
+}
+
+pluginBundle {
+    website = 'https://github.com/chubbard/gradle-zip4j/blob/master/README.md'
+    vcsUrl = 'https://github.com/chubbard/gradle-zip4j'
+    tags = ['zip4j', 'gradle']
+}
