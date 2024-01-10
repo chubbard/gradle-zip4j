@@ -26,7 +26,7 @@ class Zip4j extends AbstractArchiveTask {
 
     @Input
     @Optional
-    EncryptionMethod encryptionMethod
+    EncryptionMethod encryptionMethod = EncryptionMethod.AES
 
     @Input
     @Optional
@@ -95,7 +95,7 @@ class Zip4j extends AbstractArchiveTask {
                             ZipParameters zipParams = new ZipParameters()
                             if (password) {
                                 zipParams.setEncryptFiles(true)
-                                zipParams.setEncryptionMethod(encryptionMethod ?: EncryptionMethod.AES)
+                                zipParams.setEncryptionMethod(encryptionMethod)
                                 zipParams.setAesKeyStrength(aesStrength)
                                 zipParams.setAesVersion(aesVersion)
                             }

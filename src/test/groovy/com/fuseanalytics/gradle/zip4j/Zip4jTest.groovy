@@ -39,6 +39,14 @@ class Zip4jTest extends AbstractGradleTest {
             from(project.files("\${projectDir}/src"))
             destinationDirectory = project.file("\${projectDir}/build")
         }
+        
+        task unzipProtectedZip(type:Copy) {
+            dependsOn("testBaseName")
+            from(zip4j.tree(file("\${projectDir}/build/zip4j-source-v1.zip")) {
+                password = "The Tall Dark Monkey Abmaj7"
+            })
+            into file("\${projectDir}/build/unzipProtectedZip")
+        }
         """
         buildFile.withPrintWriter { it.write( build ) }
     }
@@ -75,6 +83,22 @@ class Zip4jTest extends AbstractGradleTest {
         assert output.exists()
 
         assertExtractionOfZip("build/zip4j-source-v1.zip", "The Tall Dark Monkey Abmaj7")
+    }
+
+    @Test
+    public void testUnzip() {
+        BuildResult result = GradleRunner.create()
+                .withProjectDir( projectDir )
+                .withPluginClasspath()
+                .withArguments( "unzipProtectedZip")
+                .build()
+
+        println( result.getOutput() )
+
+        File output = new File( projectDir, "build/unzipProtectedZip" )
+        assert result.getTasks().first().outcome == TaskOutcome.SUCCESS
+        assert output.exists()
+        assert output.listFiles().length == 1
     }
 
     private void assertExtractionOfZip(String zipfile, String pwd) {
